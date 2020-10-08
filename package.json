@@ -1,0 +1,17 @@
+{
+  "name": "vpngenerator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ad": "^0.3.2",
+    "express": "^4.17.1",
+    "node-powershell": "^4.0.0"
+  }
+}

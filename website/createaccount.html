@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="Small Website for our senior project." content="">
+    <meta name="Scarlett & Jose" content="Senior Project">
+    <meta name="generator" content="Jekyll v4.1.1">
+    <title>Transcend Account Creation</title>
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+
+        .err{
+            color:red;
+        }
+        .suc{
+            color:green;
+        }
+    </style>
+    <!-- Custom styles for this template -->
+    <link href="css/signin.css" rel="stylesheet">
+</head>
+
+<body class="text-center">
+    
+        <form class="form-signin">
+                <h4>Create New User</h4>
+                <img class="mb-4" src="image/t.png" alt="" width="72" height="72">
+                <h1 class="h3 mb-3 font-weight-normal">Please fill in the following information.</h1>
+                <input type="text" class="form-control" id="fname" name="fname" placeholder="First Name" >
+                <br>
+                <input type="text" class="form-control" id="lname" name="lname" placeholder="Last Name" >
+                <br>
+                <input type="password" class="form-control" id="pass" name="pass" placeholder="Password" >
+                <br>
+                <input type="password" class="form-control" id="cpass" name="cpass" placeholder="Confirm Password" > 
+                <br>
+                
+                <select class = "form-control" id="group" name="group">
+                    <option value='Default' selected>Select Default Group</option>
+                    <option value ='TESTGROUP'>TESTGROUP</option>
+                    <option value = 'TESTGROUP2'>TESTGROUP2</option>
+                    
+                  </select>
+                  
+                  <br>
+                <div style = "padding:0px"> 
+                
+                <button id='register' type="button" class="btn btn-primary">Register</button>
+                </div>
+                <div style = "margin: auto;">
+                    <p id ="status"></p2>
+                </div>
+        </form> 
+        
+        
+        
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            console.log("THE PAGE HAS LOADED AND JS AND JQUERY PROBABLY WORK IF YOUR'RE READING THIS")
+            
+        
+
+        $('#register').click(function() 
+        {
+            $('#status').empty();
+            $('#status').removeClass();
+
+            console.log("Account Register has been called");
+            let fname = $('#fname').val().trim();
+            let lname = $('#lname').val().trim();
+            let pass = $('#pass').val().trim();
+            let cpass = $('#cpass').val().trim();
+            let group = $('#group').val().trim();
+            let dataCheck = false;
+            status = '';
+            if(fname==''||lname=='')
+                    status = 'Please Enter a Valid First and Last name. ';
+            else if(pass==''&&cpass=='')
+            {
+                status = status + 'Passwords cannot be left blank';
+            }
+            else if(cpass!=pass)
+            {
+                status = status + 'Passwords Must Match';
+            }
+            else if(group=='Default')
+            {
+                status = status + 'You must select a defualt group';
+                
+            }
+            else{
+                dataCheck = true;
+                profile = createUserJson(fname,lname,pass,group);
+                console.log(profile);
+            }
+
+            
+            
+                
+
+           console.log(`You have entered ${fname} and ${lname} and ${pass} and ${group}`);
+            //`http://localhost/newuser=?Fname=${fname}&Lname=${lname}&Password=${pass}`
+            
+
+            if(dataCheck)
+            {
+            sendRequest(`http://10.0.2.6:3000/newuser?Fname=${fname}&Lname=${lname}&Password=${pass}&Group=${profile.Group}&Username=${profile.Username}`,(output)=>{
+               console.log(output);
+               $('#status').empty();
+               $('#status').addClass("suc");
+               $('#status').append(`${output}`);
+               alert(`Username is ${profile.Username}`)
+              
+
+           });
+            }
+            else
+            {
+                $('#status').addClass("err");
+                $('#status').append(status);
+            }
+            
+        });
+        function sendRequest(theUrl, callback)
+        {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = function() { 
+                if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                    callback(xmlHttp.responseText);
+            }
+            xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+            xmlHttp.send(null);
+        }
+        
+        
+        //===========================================
+        function getRandomInt(max,min) {
+            return Math.floor(Math.random() * max) + min;
+        }
+
+        function createUserJson(firstname,lastname,password,group)
+        {
+            userProfile = {
+            "Username" : firstname[0].toUpperCase()+lastname[0].toUpperCase()+getRandomInt(8999,1000),
+            "FName": firstname,
+            "LName" : lastname,
+            "Password" : password,
+            'Group': group,
+
+            }
+        return userProfile;
+        }
+
+    });
+    </script>
+</body>
+
+</html>

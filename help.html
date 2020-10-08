@@ -1,0 +1,398 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">        
+        
+        <style>
+            .error
+            {
+                border: 1px red solid;
+            }
+            
+            .selected
+            {
+                color: blue;
+            }
+            
+            #loginBtn, #logoutBtn, #registerBtn, #lowscoreBtn, #game
+            {
+                display: none;
+            }
+            
+            a, a:hover
+            {
+                color: white;    
+            }
+             .box
+            {
+              height: 150px;  
+              background-color: black;
+              border-radius: 50px; 
+              border: white 2px solid;
+            }
+            
+            .prize
+            {
+                background-color: green !important;
+            }
+
+            .flipped
+            {
+                background-color: red !important;
+            }
+            body
+            {
+                background-image: url("https://i.imgur.com/rPvSqh4.png")
+            }
+        </style>
+    </head>
+    
+    <body>
+        
+        <div class="jumbotron jumbotron-fluid mb-0">
+            <div class="container">
+                <h1 class="display-4">Find the Treasure</h1>
+                <p class="lead">you better be quick</p>
+            </div>
+        </div>        
+        <div class="">
+            <ul class="nav justify-content-start border p-2 bg-dark text-light">
+                <li class="nav-item">
+                    <a href="#" id='lowscoreBtn' class='nav-link'>Reset Low Score</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" id='loginBtn' class='nav-link'>Login</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" id='registerBtn' class='nav-link'>Register</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" id='logoutBtn' class='nav-link'>Logout</a>
+                </li>
+                <li class="nav-item">
+                    <span id="msg"></span>
+                </li>
+            </ul>            
+            <div>
+                <ul id='songs' class='list-group'>
+                    
+                </ul>
+            </div>            
+        </div>
+        
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>        
+        
+       
+        <div id='loginDlg' class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark text-light">
+                        <h5 class="modal-title">Login</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h4>Login</h4>
+                        <form class="border border-primary p-3">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="email" name="email" placeholder="Email">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                            </div>
+                        </form> 
+                    </div>
+                    <div class="modal-footer">
+                        <button id='confirmLoginBtn' type="button" class="btn btn-primary">Login</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>    
+        
+        <div id='registerDlg' class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark text-light">
+                        <h5 class="modal-title">Register</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h4>Register</h4>
+                        <form class="border border-primary p-3">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="regEmail" name="regEmail" placeholder="Email">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" id="regPassword" name="regPassword" placeholder="Password">
+                            </div>
+                        </form> 
+                    </div>
+                    <div class="modal-footer">
+                        <button id='confirmRegisterBtn' type="button" class="btn btn-primary">Register</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        
+        
+        
+        <div class="container" id="game">
+            
+            <h4 style="text-align:center; color:white">Treasure Hunt</h4>
+
+            <!--boxes-->
+            <div id='boxes' class="row">
+            </div>
+            
+            <p style="color:white">Guesses: <span id='guesses' style="color:white">0</span></p>
+            <p style="color:white">Worst Game: <span id='worstGame' style="color:white">0</span></p>
+            <p style="color:white">Hey prof, you said to leave you a note reminding you that the game score calculation works behind on the server and database side, just not on the front end, and that you were okay with that</p>
+
+            
+        </div>
+        
+        <!--put your modal dialogs here...-->
+        <div id='confirm' class="modal" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header bg-dark text-light">
+                <h5 class="modal-title">Play Again?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Would you like to play again?</p>
+              </div>
+              <div class="modal-footer">
+                <button id='yes' type="button" class="btn btn-primary">Yes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+              </div>
+            </div>
+          </div>
+        </div>          
+        
+<script>
+/* global $ */
+$(document).ready(function() 
+    {
+            console.log('the page has loaded');
+            var model = {};
+            var gameModel = {};
+        //============================model
+            function initializeModel()
+            {
+                
+                sendRequest("whoIsLoggedIn", function()
+                {
+                });
+                let boxCount = 6;
+                gameModel.guesses = 0;
+                gameModel.boxes = [];
+                let prize = Math.floor(Math.random() * boxCount);
+                for (var i = 0; i < boxCount; i++) 
+                {
+                  gameModel.boxes.push({flipped: false, prize: false});
+                }
+                gameModel.boxes[prize].prize = true;
+                gameModel.gameOver = false;
+                console.log(prize);
+
+                
+            }
+            
+            // view...
+            function updateView()
+            {
+                
+                if (model.result == undefined)
+                {
+                    $("#msg").text(model.error);
+                    
+                    $("#logoutBtn").hide();
+                    $("#loginBtn").show();
+                    $("#registerBtn").show();
+                    $("#lowscoreBtn").hide();
+                    $("#game").hide();
+
+                }
+                else
+                {
+                    $("#logoutBtn").show();
+                    $("#lowscoreBtn").show();
+                    $("#loginBtn").hide();
+                    $("#registerBtn").hide();
+                    $("#game").show();
+
+                    
+                    if (model.result.email == undefined)
+                    {
+                     
+                    }
+                    else
+                    {
+                        $("#msg").text("Hello " + model.result.email);
+                    }
+                }
+               
+                 $('#boxes').empty();
+                for (var i in gameModel.boxes) 
+                {
+                    let item = $("<div class='col-6 box'></div>");
+                    if (gameModel.boxes[i].flipped && gameModel.boxes[i].prize)
+                    {
+                      item.addClass("prize");
+                    }
+                    else if (gameModel.boxes[i].flipped && !gameModel.boxes[i].prize)
+                    {
+                      item.addClass("flipped");
+                    }
+                    item.attr("id", i);
+                    $('#boxes').append(item);
+                    if(model.result != undefined)
+                    {
+                        if(model.result.score !=0)
+                            $("#worstGame").text(model.result.score);
+                        else
+                            $("#worstGame").text('N/A');
+                        
+                    }
+
+                }
+            }            
+            
+            // controller ...
+        $(document).on("click",".box",function() 
+            {
+                if (gameModel.gameOver == true)
+                {
+                  return;
+                }
+                
+                let i = $(this).attr("id");
+                if (!gameModel.boxes[i].flipped)
+                {
+                  gameModel.guesses = gameModel.guesses+1;
+                  gameModel.boxes[i].flipped = true;
+                  if(gameModel.boxes[i].prize)
+                  {
+                    if(gameModel.guesses>model.result.score)
+                        {
+                            var score = gameModel.guesses;
+                            sendRequest("addScore?score="+score,function() {});                
+                        }  
+                    gameModel.gameOver = true;
+                    updateView();
+                    $('#confirm').modal('show');
+                  }
+                  else
+                  {
+                    updateView();
+                  }
+                }
+                
+                $('#guesses').empty(); 
+                $("#guesses").append(gameModel.guesses);
+                
+                
+                
+                
+            });
+           
+            function sendRequest(url, callback)
+            {
+                var jqxhr = $.get(url);
+                jqxhr.done(function(json) 
+                {
+                    model = json;
+                    updateView();
+                    if (callback !== undefined)
+                        callback();
+                })
+                jqxhr.fail(function(json) 
+                {
+                    let error = JSON.stringify(json);
+                    model.error = error;
+                    updateView();
+                })
+            
+            }
+            
+
+            $('#loginBtn').click(function() 
+            {
+                $('#password').val('');
+                $('#loginDlg').modal('show');
+            });
+
+            $('#registerBtn').click(function() 
+            {
+                $('#regEmail').val('');
+                $('#regPassword').val('');
+                $('#registerDlg').modal('show');
+            });
+            
+            $('#logoutBtn').click(function() 
+            {
+                sendRequest("logout", function() 
+                {
+                    if (model.error != undefined)
+                        $("#songs").empty();
+                });
+            });
+        
+            $('#confirmLoginBtn').click(function() 
+            {
+                let email = $('#email').val().trim();
+                let password = $('#password').val().trim();
+                
+                sendRequest("login?email="+email+"&password="+password, function ()
+                {
+                    if (model.error == undefined)
+                        sendRequest("getScore",function() {
+                            
+                        });    
+                });
+                $('#loginDlg').modal('hide');
+            });
+
+            $('#confirmRegisterBtn').click(function() 
+            {
+                let email = $('#regEmail').val().trim();
+                let password = $('#regPassword').val().trim();
+                sendRequest("register?email="+email+"&password="+password, function () 
+                { 
+                    if (model.error == undefined)
+                        sendRequest("getScore");
+                });
+                
+                $('#registerDlg').modal('hide');
+            });
+            
+            $('#yes').click(function() 
+            {
+                $('#confirm').modal('hide');
+                
+               
+                initializeModel();
+                updateView();
+            });
+            
+            $('#lowscoreBtn').click(function() 
+            {
+            sendRequest("addScore?score="+0,function() {});                
+            });
+            // run...
+            initializeModel();
+            updateView();
+    });
+        
+</script>
+</body>
+</html>

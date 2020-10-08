@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="Small Website for our senior project." content="">
+    <meta name="Scarlett & Jose" content="Senior Project">
+    <meta name="generator" content="Jekyll v4.1.1">
+    <title>Transcend Sing In</title>
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+    <!-- Custom styles for this template -->
+    <link href="css/signin.css" rel="stylesheet">
+</head>
+
+<body class="text-center">
+    <form class="form-signin">
+        <img class="mb-4" src="image/t.png" alt="" width="72" height="72">
+        <h1 class="h3 mb-3 font-weight-normal">Please Sign In</h1>
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input id="username" type="text" id="inputEmail" class="form-control" placeholder="Username" >
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input id = "password" type="password" id="inputPassword" class="form-control" placeholder="Password" >
+        <div style="margin-bottom:10px"></div>
+        <div class="checkbox mb-3">
+            <label>
+                <input type="checkbox" value="remember-me"> Remember me
+            </label>
+            <p id ="status"></p>
+        </div>
+        <button id="login" class="btn btn-lg btn-primary btn-block" type="button">Sign in</button>
+        
+        <footer class="mastfoot mt-auto">
+            <p class="mt-5 mb-3 text-muted">Transcend Inc. &copy; 2020-2020</p>
+        </footer>
+    </form>
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+                console.log("THE PAGE HAS LOADED AND JS AND JQUERY PROBABLY WORK IF YOUR'RE READING THIS");
+
+                $('#login').click(function() 
+                {
+                    $('#status').empty();
+                    let status = '';
+                    let username = $('#username').val().trim();
+                    let password = $('#username').val().trim();
+                    let checkvalue = false;
+
+                    if(username==''||password=='')
+                    {
+                        status+= 'You Must Specify Login in formation';
+                    }
+                    else{
+                        checkvalue =true;
+                    }
+
+                    if(checkvalue)
+                    {
+                        window.location.replace("http://10.0.2.6:3000/createaccount");
+                    }
+                    else{
+                        $('#status').append(status);
+                    }
+                    
+
+                    console.log("FUNCTION WAS CALLED", username,password);
+
+               
+                });
+        });
+
+
+    </script>
+</body>
+
+</html>
