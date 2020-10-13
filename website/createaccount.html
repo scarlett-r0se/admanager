@@ -39,7 +39,31 @@
 
 <body class="text-center">
     
+    
+
+    <div id="logoutmodal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" style= "color:black">Are you sure you want to log out?</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p style= "color:black" >Logging out will take you back to the home page</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" id="modallogout" >Logout</button>
+              <button type="button" class="btn btn-secondary" id="modalclose" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      
         <form class="form-signin">
+                <h1 id="greeter"></h1>
                 <h4>Create New User</h4>
                 <img class="mb-4" src="image/t.png" alt="" width="72" height="72">
                 <h1 class="h3 mb-3 font-weight-normal">Please fill in the following information.</h1>
@@ -62,7 +86,8 @@
                   <br>
                 <div style = "padding:0px"> 
                 
-                <button id='register' type="button" class="btn btn-primary">Register</button>
+                <button id='register' type="button" class="btn btn-primary">Create New User</button>
+                <button id='logout' type="button" class="btn btn-primary">Logout</button>
                 </div>
                 <div style = "margin: auto;">
                     <p id ="status"></p2>
@@ -76,10 +101,22 @@
     <script type="text/javascript">
         $(document).ready(function() {
             console.log("THE PAGE HAS LOADED AND JS AND JQUERY PROBABLY WORK IF YOUR'RE READING THIS")
-            
+            sendRequest(`http://10.0.2.6:3000/whoisloggedin`,(output)=>
+            {
+                console.log(output);
+                const data = JSON.parse(output);
+                let email = JSON.stringify(data.result.email)
+                email = email.replace(/"/gm,"");
+                email = email.replace(/\@.*$/gm,"");
+                $('#greeter').empty();
+                $('#greeter').append(`Hello ${email}`);
+                console.log(data.result.email);
+
+            });
         
 
         $('#register').click(function() 
+        
         {
             $('#status').empty();
             $('#status').removeClass();
@@ -140,6 +177,25 @@
             }
             
         });
+        
+        $('#logout').click(function(){
+            $('#logoutmodal').show();
+        });
+
+        $('#modalclose').click(function(){
+            $('#logoutmodal').hide();
+        })
+
+        $('#modallogout').click(function(){
+            sendRequest(`http://10.0.2.6:3000/logout`,(output)=>{
+              
+              let data = JSON.parse(output);
+                if(data.error == "Nobody is logged in.");
+                {
+                    window.location.replace("http://10.0.2.6:3000/");
+                }
+            });
+        })
         function sendRequest(theUrl, callback)
         {
             var xmlHttp = new XMLHttpRequest();

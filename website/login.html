@@ -37,15 +37,11 @@
         <h1 class="h3 mb-3 font-weight-normal">Please Sign In</h1>
         <label for="inputEmail" class="sr-only">Email address</label>
         <input id="username" type="text" id="inputEmail" class="form-control" placeholder="Username" >
+        <br>
         <label for="inputPassword" class="sr-only">Password</label>
         <input id = "password" type="password" id="inputPassword" class="form-control" placeholder="Password" >
         <div style="margin-bottom:10px"></div>
-        <div class="checkbox mb-3">
-            <label>
-                <input type="checkbox" value="remember-me"> Remember me
-            </label>
-            <p id ="status"></p>
-        </div>
+       
         <button id="login" class="btn btn-lg btn-primary btn-block" type="button">Sign in</button>
         
         <footer class="mastfoot mt-auto">
@@ -63,7 +59,7 @@
                     $('#status').empty();
                     let status = '';
                     let username = $('#username').val().trim();
-                    let password = $('#username').val().trim();
+                    let password = $('#password').val().trim();
                     let checkvalue = false;
 
                     if(username==''||password=='')
@@ -76,7 +72,21 @@
 
                     if(checkvalue)
                     {
-                        window.location.replace("http://10.0.2.6:3000/createaccount");
+                        //window.location.replace("http://10.0.2.6:3000/createaccount");
+
+                        sendRequest(`http://10.0.2.6:3000/login?email=${username}&password=${password}`,(output)=>{
+                            console.log(output);
+                            data = JSON.parse(output);
+                            if(data.error)
+                            {
+                                $('#status').empty();
+                                $('#status').append(JSON.stringify(data.error).replace(/"/gm,""));
+
+                            }
+                            else{
+                                window.location.replace("http://10.0.2.6:3000/createaccount");
+                            }
+                        });
                     }
                     else{
                         $('#status').append(status);
@@ -85,8 +95,18 @@
 
                     console.log("FUNCTION WAS CALLED", username,password);
 
-               
                 });
+                
+                function sendRequest(theUrl, callback)
+                {
+                    var xmlHttp = new XMLHttpRequest();
+                    xmlHttp.onreadystatechange = function() { 
+                        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                            callback(xmlHttp.responseText);
+                    }
+                    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+                    xmlHttp.send(null);
+                }
         });
 
 
