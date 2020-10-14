@@ -6,29 +6,15 @@ const createUser = require('./createUser');
 var fs = require('fs');
 const bcrypt = require('bcrypt');
 var mysql = require('mysql');
+require('dotenv').config();
 app.use(express.static(__dirname + '/website'));
 
-app.use(session({ secret: 'happy jungle', 
-                  resave: false, 
-                  saveUninitialized: false, 
-                  cookie: { maxAge: 6000000 }}));
 
+app.use(session(JSON.parse(process.env.session)));
 
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
-
-process.env.PORT = 3000;
-process.env.IP = '10.0.2.6';
-
-const conInfo = 
-{
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'DATrans@$12345',
-    database: "webauth"
-};
-
-
+const conInfo = JSON.parse(process.env.conInfo);
 
 app.all('/', (req, res) => {
   res.writeHead(200, {'Content-Type': 'text/html'});
@@ -41,12 +27,14 @@ app.all('/register',register);//Creates a new User
 app.all('/whoIsLoggedIn',whoIsLoggedIn)//Checks who is logged in
 app.all('/login',login);//logs user in
 app.all('/logout',logout); //logs user out
+app.all('/listusers',showAdmins);
 
 
 app.all('/test',testdbconnection);//TEST
 app.all('/testQ',testquery);//TEST
 app.all('/testsession',testsession);//TEST
 app.all('/viewsession',viewsession);//TEST
+
 
 app.listen(process.env.PORT,  process.env.IP, startHandler())
 
@@ -81,21 +69,51 @@ app.get('/createaccount', (req, res) => {
     }
 })
 
+app.get('/accountpage',(req, res) => {
+  if (IsLoggedIn(req,res))
+  {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    var index = fs.readFileSync('website/accountpage.html');
+    res.end(index);
+  }
+  else
+  {
+    res.redirect("http://10.0.2.6:3000/login.html");
+  }
+});
+
 app.get('/newuser', (req, res) => {
   
   //res.send('NEW USER REQUEST RECIEVED');
   console.log("/newuser has been pinged with the following data:")
-  console.log(req.query);  
+  if(IsLoggedIn(req,res))
+  {
+    createUser.psNewUser(req.query,(output)=>{
+      res.send(output);
   
-  createUser.psNewUser(req.query);
+    });
+    
+  }
+  else{
+    res.send("You Must be logged in to create a new user");
+    return;
+  }
+  
+  
 
-  res.send(`Request Received. Sent New User Request to the server`);
+ // res.send(`Request Received. Sent New User Request to the server`);
   
  
   
 })
 
 app.get('/vpn',(req,res)=>{
+
+  if(req.query.MPASSWORD!=process.env.MPASSWORD)
+  {
+    writeResult(req,res,{'error' : "Please specify the specify the master password"});
+    return;
+  }
 
 console.log("API REQUEST RECIEVED");
 
@@ -129,6 +147,8 @@ console.log(req.query.q);
   })
   POST.write(data)
   POST.end()
+
+
 })
 
 function time(){
@@ -160,7 +180,17 @@ let seconds = date_ob.getSeconds();
 return year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
 
 }
+
+
 // END OF AD/VPN WRAPPER FUNCTIONS
+//===================================================
+//404 function
+app.get('*', function(req, res)
+{
+  res.writeHead(404, {'Content-Type': 'text/html'});
+  var FoF = fs.readFileSync('website/404.html');
+  res.end(FoF);
+});
 //===================================================
 //TEST FUNCTIONS
 function testdbconnection(req,res)
@@ -258,6 +288,12 @@ function IsLoggedIn(req, res)
 
 function register(req, res)
 {
+  if(req.query.MPASSWORD!=process.env.MPASSWORD)
+  {
+    writeResult(req,res,{'error' : "Please specify the specify the master password"});
+    return;
+  }
+
   if (req.query.email == undefined || !validateEmail(req.query.email))
   {
     writeResult(req, res, {'error' : "Please specify a valid email"});
@@ -362,6 +398,34 @@ function whoIsLoggedIn(req, res)
   else
     writeResult(req, res, req.session.user);
 }
+
+function showAdmins(req,res)
+{
+if(IsLoggedIn(req, res))
+{
+var con = mysql.createConnection(conInfo);
+con.connect(function(err) 
+{
+  if (err) 
+    res.send({'error' : err});
+  else
+  {
+    console.log('DBCONNECTION SUCCESSFUL');
+    con.query("SELECT * FROM USER", function (err, result, fields) 
+            {
+              if (err) 
+                res.send({'error' : err});
+              else
+                res.send({'result' : result});
+            });
+  }
+}); 
+}
+else{
+  whoIsLoggedIn(req,res);
+}
+}
+
 //END OF DBFUNTIONS
 
 

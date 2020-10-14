@@ -26,6 +26,12 @@
                 font-size: 3.5rem;
             }
         }
+        .err{
+            color:red;
+        }
+        .suc{
+            color:green;
+        }
     </style>
     <!-- Custom styles for this template -->
     <link href="css/signin.css" rel="stylesheet">
@@ -41,9 +47,9 @@
         <label for="inputPassword" class="sr-only">Password</label>
         <input id = "password" type="password" id="inputPassword" class="form-control" placeholder="Password" >
         <div style="margin-bottom:10px"></div>
-       
         <button id="login" class="btn btn-lg btn-primary btn-block" type="button">Sign in</button>
-        
+        <p class="err" id = "status"></p>
+
         <footer class="mastfoot mt-auto">
             <p class="mt-5 mb-3 text-muted">Transcend Inc. &copy; 2020-2020</p>
         </footer>
@@ -84,7 +90,7 @@
 
                             }
                             else{
-                                window.location.replace("http://10.0.2.6:3000/createaccount");
+                                window.location.replace("http://10.0.2.6:3000/accountpage");
                             }
                         });
                     }

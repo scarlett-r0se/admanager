@@ -26,207 +26,195 @@
             }
         }
 
-        .err{
-            color:red;
+        .err {
+            color: red;
         }
-        .suc{
-            color:green;
+
+        .suc {
+            color: green;
         }
     </style>
     <!-- Custom styles for this template -->
     <link href="css/signin.css" rel="stylesheet">
+    <link href="css/cover.css" rel="stylesheet">
 </head>
 
 <body class="text-center">
-    
-    
-
     <div id="logoutmodal" class="modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" style= "color:black">Are you sure you want to log out?</h5>
+              <h5 class="modal-title">Are you sure you want to log out?</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-              <p style= "color:black" >Logging out will take you back to the home page</p>
+              <p>Logging out will take you back to the home page</p>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary" id="modallogout" >Logout</button>
-              <button type="button" class="btn btn-secondary" id="modalclose" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-danger" id="modallogout" >Logout</button>
+              <button type="button" class="btn btn-dark" id="modalclose" data-dismiss="modal">Close</button>
             </div>
           </div>
         </div>
       </div>
-      
-      
-        <form class="form-signin">
-                <h1 id="greeter"></h1>
-                <h4>Create New User</h4>
-                <img class="mb-4" src="image/t.png" alt="" width="72" height="72">
-                <h1 class="h3 mb-3 font-weight-normal">Please fill in the following information.</h1>
-                <input type="text" class="form-control" id="fname" name="fname" placeholder="First Name" >
-                <br>
-                <input type="text" class="form-control" id="lname" name="lname" placeholder="Last Name" >
-                <br>
-                <input type="password" class="form-control" id="pass" name="pass" placeholder="Password" >
-                <br>
-                <input type="password" class="form-control" id="cpass" name="cpass" placeholder="Confirm Password" > 
-                <br>
-                
-                <select class = "form-control" id="group" name="group">
-                    <option value='Default' selected>Select Default Group</option>
-                    <option value ='TESTGROUP'>TESTGROUP</option>
-                    <option value = 'TESTGROUP2'>TESTGROUP2</option>
-                    
-                  </select>
-                  
-                  <br>
-                <div style = "padding:0px"> 
-                
-                <button id='register' type="button" class="btn btn-primary">Create New User</button>
-                <button id='logout' type="button" class="btn btn-primary">Logout</button>
-                </div>
-                <div style = "margin: auto;">
-                    <p id ="status"></p2>
-                </div>
-        </form> 
-        
-        
-        
+
+
+    <form class="form-signin">
+        <h1 id="greeter"></h1>
+        <h4>Create New User</h4>
+        <img class="mb-4" src="image/t.png" alt="" width="72" height="72">
+        <h1 class="h3 mb-3 font-weight-normal">Please fill in the following information.</h1>
+        <input type="text" class="form-control" id="fname" name="fname" placeholder="First Name">
+        <br>
+        <input type="text" class="form-control" id="lname" name="lname" placeholder="Last Name">
+        <br>
+        <input type="password" class="form-control" id="pass" name="pass" placeholder="Password">
+        <br>
+        <input type="password" class="form-control" id="cpass" name="cpass" placeholder="Confirm Password">
+        <br>
+
+        <select class="form-control" id="group" name="group">
+            <option value='Default' selected>Select Default Group</option>
+            <option value='TESTGROUP'>TESTGROUP</option>
+            <option value='TESTGROUP2'>TESTGROUP2</option>
+
+        </select>
+
+        <br>
+        <div style="padding:0px">
+
+            <button id='register' type="button" class="btn btn-primary">Create New User</button>
+            <button id='logout' type="button" class="btn btn-danger">Logout</button>
+        </div>
+        <div style="margin: auto;">
+            <p id="status">
+                </p2>
+        </div>
+    </form>
+
+
+
 
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             console.log("THE PAGE HAS LOADED AND JS AND JQUERY PROBABLY WORK IF YOUR'RE READING THIS")
-            sendRequest(`http://10.0.2.6:3000/whoisloggedin`,(output)=>
-            {
+            sendRequest(`http://10.0.2.6:3000/whoisloggedin`, (output) => {
                 console.log(output);
                 const data = JSON.parse(output);
                 let email = JSON.stringify(data.result.email)
-                email = email.replace(/"/gm,"");
-                email = email.replace(/\@.*$/gm,"");
+                email = email.replace(/"/gm, "");
+                email = email.replace(/\@.*$/gm, "");
                 $('#greeter').empty();
                 $('#greeter').append(`Hello ${email}`);
                 console.log(data.result.email);
 
             });
-        
 
-        $('#register').click(function() 
-        
-        {
-            $('#status').empty();
-            $('#status').removeClass();
 
-            console.log("Account Register has been called");
-            let fname = $('#fname').val().trim();
-            let lname = $('#lname').val().trim();
-            let pass = $('#pass').val().trim();
-            let cpass = $('#cpass').val().trim();
-            let group = $('#group').val().trim();
-            let dataCheck = false;
-            status = '';
-            if(fname==''||lname=='')
-                    status = 'Please Enter a Valid First and Last name. ';
-            else if(pass==''&&cpass=='')
-            {
-                status = status + 'Passwords cannot be left blank';
-            }
-            else if(cpass!=pass)
-            {
-                status = status + 'Passwords Must Match';
-            }
-            else if(group=='Default')
-            {
-                status = status + 'You must select a defualt group';
-                
-            }
-            else{
-                dataCheck = true;
-                profile = createUserJson(fname,lname,pass,group);
-                console.log(profile);
-            }
+            $('#register').click(function()
 
-            
-            
-                
-
-           console.log(`You have entered ${fname} and ${lname} and ${pass} and ${group}`);
-            //`http://localhost/newuser=?Fname=${fname}&Lname=${lname}&Password=${pass}`
-            
-
-            if(dataCheck)
-            {
-            sendRequest(`http://10.0.2.6:3000/newuser?Fname=${fname}&Lname=${lname}&Password=${pass}&Group=${profile.Group}&Username=${profile.Username}`,(output)=>{
-               console.log(output);
-               $('#status').empty();
-               $('#status').addClass("suc");
-               $('#status').append(`${output}`);
-               alert(`Username is ${profile.Username}`)
-              
-
-           });
-            }
-            else
-            {
-                $('#status').addClass("err");
-                $('#status').append(status);
-            }
-            
-        });
-        
-        $('#logout').click(function(){
-            $('#logoutmodal').show();
-        });
-
-        $('#modalclose').click(function(){
-            $('#logoutmodal').hide();
-        })
-
-        $('#modallogout').click(function(){
-            sendRequest(`http://10.0.2.6:3000/logout`,(output)=>{
-              
-              let data = JSON.parse(output);
-                if(data.error == "Nobody is logged in.");
                 {
-                    window.location.replace("http://10.0.2.6:3000/");
-                }
+                    $('#status').empty();
+                    $('#status').removeClass();
+
+                    console.log("Account Register has been called");
+                    let fname = $('#fname').val().trim();
+                    let lname = $('#lname').val().trim();
+                    let pass = $('#pass').val().trim();
+                    let cpass = $('#cpass').val().trim();
+                    let group = $('#group').val().trim();
+                    let dataCheck = false;
+                    status = '';
+                    if (fname == '' || lname == '')
+                        status = 'Please Enter a Valid First and Last name. ';
+                    else if (pass == '' && cpass == '') {
+                        status = status + 'Passwords cannot be left blank';
+                    } else if (cpass != pass) {
+                        status = status + 'Passwords Must Match';
+                    } else if (group == 'Default') {
+                        status = status + 'You must select a defualt group';
+
+                    } else {
+                        dataCheck = true;
+                        profile = createUserJson(fname, lname, pass, group);
+                        console.log(profile);
+                    }
+
+
+
+
+
+                    console.log(`You have entered ${fname} and ${lname} and ${pass} and ${group}`);
+                    //`http://localhost/newuser=?Fname=${fname}&Lname=${lname}&Password=${pass}`
+
+
+                    if (dataCheck) {
+                        sendRequest(`http://10.0.2.6:3000/newuser?Fname=${fname}&Lname=${lname}&Password=${pass}&Group=${profile.Group}&Username=${profile.Username}`, (output) => {
+                            console.log(output);
+                            $('#status').empty();
+                            $('#status').addClass("suc");
+                            $('#status').append(`${output}`);
+                            alert(`Username is ${profile.Username}`)
+
+
+                        });
+                    } else {
+                        $('#status').addClass("err");
+                        $('#status').append(status);
+                    }
+
+                });
+
+            $('#logout').click(function() {
+                $('#logoutmodal').show();
             });
-        })
-        function sendRequest(theUrl, callback)
-        {
-            var xmlHttp = new XMLHttpRequest();
-            xmlHttp.onreadystatechange = function() { 
-                if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-                    callback(xmlHttp.responseText);
+
+            $('#modalclose').click(function() {
+                $('#logoutmodal').hide();
+            })
+
+            $('#modallogout').click(function() {
+                sendRequest(`http://10.0.2.6:3000/logout`, (output) => {
+
+                    let data = JSON.parse(output);
+                    if (data.error == "Nobody is logged in."); {
+                        window.location.replace("http://10.0.2.6:3000/");
+                    }
+                });
+            })
+
+            function sendRequest(theUrl, callback) {
+                var xmlHttp = new XMLHttpRequest();
+                xmlHttp.onreadystatechange = function() {
+                    if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                        callback(xmlHttp.responseText);
+                }
+                xmlHttp.open("GET", theUrl, true); // true for asynchronous
+                xmlHttp.send(null);
             }
-            xmlHttp.open("GET", theUrl, true); // true for asynchronous 
-            xmlHttp.send(null);
-        }
-        
-        
-        //===========================================
-        function getRandomInt(max,min) {
-            return Math.floor(Math.random() * max) + min;
-        }
 
-        function createUserJson(firstname,lastname,password,group)
-        {
-            userProfile = {
-            "Username" : firstname[0].toUpperCase()+lastname[0].toUpperCase()+getRandomInt(8999,1000),
-            "FName": firstname,
-            "LName" : lastname,
-            "Password" : password,
-            'Group': group,
 
+            //===========================================
+            function getRandomInt(max, min) {
+                return Math.floor(Math.random() * max) + min;
             }
-        return userProfile;
-        }
 
-    });
+            function createUserJson(firstname, lastname, password, group) {
+                userProfile = {
+                    "Username": firstname[0].toUpperCase() + lastname[0].toUpperCase() + getRandomInt(8999, 1000),
+                    "FName": firstname,
+                    "LName": lastname,
+                    "Password": password,
+                    'Group': group,
+
+                }
+                return userProfile;
+            }
+
+        });
     </script>
 </body>
 

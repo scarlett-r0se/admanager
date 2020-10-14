@@ -11,12 +11,8 @@ module.exports = {
 };
 
 
-console.log(module.filename);
-console.log(module.id);
-console.log(module.exports);
 
-
-async function psNewUser(user)
+function psNewUser(user,callback)
 {
 let ps = new shell({
   executionPolicy: 'Bypass',
@@ -26,6 +22,7 @@ let ps = new shell({
 
 ps.addCommand(`New-ADUser -Name ${user.Username} -DisplayName ${user.Username} -GivenName ${user.Fname} -Surname ${user.Lname} -Enabled $True -AccountPassword (ConvertTo-SecureString ${user.Password} -AsPlainText -force) -PassThru | % {Add-ADGroupMember -Identity "${user.Group}" -Members $_}`)
 ps.invoke().then(output => {
+    callback(`Account ${user.Username} Created Successfully`)
     console.log(`Account ${user.Username} Created Successfully`);
 
     const data = JSON.stringify({
@@ -47,8 +44,8 @@ ps.invoke().then(output => {
       headers: {
           'Content-Type': 'application/json',
           'Content-Length': data.length,
-          'X-VPNADMIN-HUBNAME':'administrator',	
-          'X-VPNADMIN-PASSWORD':'420Blazeit!'
+          'X-VPNADMIN-HUBNAME':process.env.XVPNADMINHUBNAME,	
+          'X-VPNADMIN-PASSWORD':process.env.XVPNADMINPASSWORD
       }
     }
 
@@ -82,8 +79,7 @@ ps.invoke().then(output => {
   ps.dispose();
 }).catch(err => {
   console.log("ERROR Caught ",err);
-  //global.status = {"ERROR" : err};
-  
+  callback(err);  
   ps.dispose();
 });
 
