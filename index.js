@@ -6,7 +6,10 @@ const createUser = require('./createUser');
 var fs = require('fs');
 const bcrypt = require('bcrypt');
 var mysql = require('mysql');
+const { nextTick } = require('process');
 require('dotenv').config();
+const statusMonitor = require('express-status-monitor')();
+
 app.use(express.static(__dirname + '/website'));
 
 
@@ -22,14 +25,14 @@ app.all('/', (req, res) => {
   res.end(index);
 })
 
+app.get('/status', ensureloggedin, statusMonitor.pageRoute)
+app.use(statusMonitor);
 
 app.all('/register',register);//Creates a new User
 app.all('/whoIsLoggedIn',whoIsLoggedIn)//Checks who is logged in
 app.all('/login',login);//logs user in
 app.all('/logout',logout); //logs user out
-app.all('/listusers',showAdmins);
-
-
+app.all('/listusers',ensureloggedin,showAdmins);
 app.all('/test',testdbconnection);//TEST
 app.all('/testQ',testquery);//TEST
 app.all('/testsession',testsession);//TEST
@@ -56,30 +59,19 @@ app.get('/isalive', (req, res) => {
   res.send("Yes the Server is Alive.")
 })
 
-app.get('/createaccount', (req, res) => {
-    if (IsLoggedIn(req,res))
-    {
+app.get('/createaccount',ensureloggedin, (req, res) => {
       res.writeHead(200, {'Content-Type': 'text/html'});
       var index = fs.readFileSync('website/createaccount.html');
       res.end(index);
-    }
-    else
-    {
-      res.redirect("http://10.0.2.6:3000/login.html");
-    }
 })
 
-app.get('/accountpage',(req, res) => {
-  if (IsLoggedIn(req,res))
-  {
+app.get('/accountpage',ensureloggedin,(req, res) => {
+  
     res.writeHead(200, {'Content-Type': 'text/html'});
     var index = fs.readFileSync('website/accountpage.html');
     res.end(index);
-  }
-  else
-  {
-    res.redirect("http://10.0.2.6:3000/login.html");
-  }
+  
+ 
 });
 
 app.get('/newuser', (req, res) => {
@@ -274,7 +266,6 @@ function whoIsLoggedIn(req, res)
   else
     writeResult(req, res, req.session.user);
 }
-
 function IsLoggedIn(req, res)
 {
   if (req.session.user == undefined)
@@ -282,6 +273,16 @@ function IsLoggedIn(req, res)
   else
     return true;
 }
+function ensureloggedin (req, res, next) {
+  if(IsLoggedIn(req,res))
+  {
+    next();
+  }
+  else
+  {
+    res.redirect('http://10.0.2.6:3000/login.html');
+  }
+} //middleware function
 //END OF HELPERFUNCTIONS
 //=============================================================
 //DBFUNTIONS
@@ -401,8 +402,6 @@ function whoIsLoggedIn(req, res)
 
 function showAdmins(req,res)
 {
-if(IsLoggedIn(req, res))
-{
 var con = mysql.createConnection(conInfo);
 con.connect(function(err) 
 {
@@ -420,10 +419,7 @@ con.connect(function(err)
             });
   }
 }); 
-}
-else{
-  whoIsLoggedIn(req,res);
-}
+
 }
 
 //END OF DBFUNTIONS

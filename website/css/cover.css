@@ -121,3 +121,9 @@ body {
 .modal-footer {
   color: #333;
 }
+.pad {
+  margin-bottom: 10px;
+}
+.close {
+  text-shadow: none;
+}
