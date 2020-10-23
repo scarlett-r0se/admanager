@@ -9,6 +9,7 @@ var mysql = require('mysql');
 const { nextTick } = require('process');
 require('dotenv').config();
 const statusMonitor = require('express-status-monitor')();
+const ldap = require('./ldaptest');
 
 app.use(express.static(__dirname + '/website'));
 
@@ -28,15 +29,13 @@ app.all('/', (req, res) => {
 app.get('/status', ensureloggedin, statusMonitor.pageRoute)
 app.use(statusMonitor);
 
-app.all('/register',register);//Creates a new User
-app.all('/whoIsLoggedIn',whoIsLoggedIn)//Checks who is logged in
-app.all('/login',login);//logs user in
-app.all('/logout',logout); //logs user out
-app.all('/listusers',ensureloggedin,showAdmins);
-app.all('/test',testdbconnection);//TEST
-app.all('/testQ',testquery);//TEST
-app.all('/testsession',testsession);//TEST
-app.all('/viewsession',viewsession);//TEST
+
+app.all('/logout',logout); 
+app.all('/ldapAuth',ldapAuth);
+app.all('/whoIsLoggedIn',whoIsLoggedIn)
+
+
+
 
 
 app.listen(process.env.PORT,  process.env.IP, startHandler())
@@ -100,16 +99,16 @@ app.get('/newuser', (req, res) => {
 })
 
 app.get('/vpn',(req,res)=>{
-
+/*
   if(req.query.MPASSWORD!=process.env.MPASSWORD)
   {
     writeResult(req,res,{'error' : "Please specify the specify the master password"});
     return;
   }
-
+*/
 console.log("API REQUEST RECIEVED");
 
-console.log(req.query.q);
+//console.log(req.query.q);
 
     const data = req.query.q;
 
@@ -130,7 +129,7 @@ console.log(req.query.q);
     console.log(`statusCode: ${response.statusCode}`)
     response.on('data', d => {
         const JSONRes = JSON.parse(d);
-        console.log(JSONRes);
+        //console.log(JSONRes);
         res.send(JSONRes);
     })
   })
@@ -142,6 +141,14 @@ console.log(req.query.q);
 
 
 })
+
+app.all('/vpnStatus',(req,res)=>{
+  res.writeHead(200, {'Content-Type': 'text/html'});
+  var index = fs.readFileSync('website/softether.html');
+  res.end(index);
+
+})
+
 
 function time(){
   let date_ob = new Date();
@@ -184,81 +191,11 @@ app.get('*', function(req, res)
   res.end(FoF);
 });
 //===================================================
-//TEST FUNCTIONS
-function testdbconnection(req,res)
-{
-var con = mysql.createConnection(conInfo);
-con.connect(function(err) 
-{
-  if (err) 
-    res.send({'error' : err});
-  else
-  {
-    res.send('DBCONNECTION SUCCESSFUL');
-    console.log('DBCONNECTION SUCCESSFUL');
-  }
-}); 
-}
 
-function testquery(req,res)
-{
-var con = mysql.createConnection(conInfo);
-con.connect(function(err) 
-{
-  if (err) 
-    res.send({'error' : err});
-  else
-  {
-    console.log('DBCONNECTION SUCCESSFUL');
-    con.query("DESC USER", function (err, result, fields) 
-            {
-              if (err) 
-                res.send({'error' : err});
-              else
-                res.send({'result' : result});
-            });
-  }
-}); 
-}
-
-function testsession(req,res)
-{
-    console.log(req.query.q);
-    req.session.q = req.query.q;
-    res.send(req.session.q);
-}
-function viewsession(req,res)
-{
-    res.send(req.session.q);
-}
 //END OF TEST FUNCTIONS
 //=============================================================
 //HELPER FUNCTIONS
-function validateEmail(email) 
-{
-  if (email == undefined)
-  {
-    return false;
-  }
-  else
-  {
-    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-  }
-}
 
-function validatePassword(pass)
-{
-  if (pass == undefined)
-  {
-    return false;
-  }
-  else
-  {
-    var re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    return re.test(pass);
-  }
-}
 function whoIsLoggedIn(req, res)
 {
   if (req.session.user == undefined)
@@ -273,7 +210,13 @@ function IsLoggedIn(req, res)
   else
     return true;
 }
+function logout(req, res)
+{
+  req.session.user = undefined;
+  writeResult(req, res, {'error' : 'Nobody is logged in.'});
+}
 function ensureloggedin (req, res, next) {
+  
   if(IsLoggedIn(req,res))
   {
     next();
@@ -285,143 +228,29 @@ function ensureloggedin (req, res, next) {
 } //middleware function
 //END OF HELPERFUNCTIONS
 //=============================================================
-//DBFUNTIONS
 
-function register(req, res)
-{
-  if(req.query.MPASSWORD!=process.env.MPASSWORD)
-  {
-    writeResult(req,res,{'error' : "Please specify the specify the master password"});
-    return;
-  }
-
-  if (req.query.email == undefined || !validateEmail(req.query.email))
-  {
-    writeResult(req, res, {'error' : "Please specify a valid email"});
-    return;
-  }
-
-  if (req.query.password == undefined || !validatePassword(req.query.password))
-  {
-    writeResult(req, res, {'error' : "Password must have a minimum of eight characters, at least one letter and one number"});
-    return;
-  }
-
-  var con = mysql.createConnection(conInfo);
-  con.connect(function(err) 
-  {
-    if (err) 
-      writeResult(req, res, {'error' : err});
-    else
-    {
-      // bcrypt uses random salt is effective for fighting
-      // rainbow tables, and the cost factor slows down the
-      // algorithm which neutralizes brute force attacks ...
-      let hash = bcrypt.hashSync(req.query.password, 12);
-      con.query("INSERT INTO USER (USER_EMAIL, USER_PASS) VALUES (?, ?)", [req.query.email, hash], function (err, result, fields) 
-      {
-        if (err) 
-        {
-          if (err.code == "ER_DUP_ENTRY")
-            err = "User account already exists.";
-          writeResult(req, res, {'error' : err});
-        }
-        else
-        {
-          con.query("SELECT * FROM USER WHERE USER_EMAIL = ?", [req.query.email], function (err, result, fields) 
-          {
-            if (err) 
-              writeResult(req, res, {'error' : err});
-            else
-            {
-              req.session.user = {'result' : {'id': result[0].USER_ID, 'email': result[0].USER_EMAIL, "score":result[0].SCORE_VALUE}};
-              writeResult(req, res, req.session.user);
-            }
-          });
-        }
-      });
-    }
-  });
+//ldap stuff
+function ldapAuth(req,res){
+console.log(req.query);
+username = req.query.username;
+password = req.query.password;
+ldap.auth(username,password,(output)=>{
   
-}
-
-function login(req, res)
-{
-  if (req.query.email == undefined)
+  console.log(output);
+  if(!output.error)
   {
-    writeResult(req, res, {'error' : "Email is required"});
-    return;
+    
+    req.session.user = {"result" : output};
+    writeResult(req,res, {"result" : output});
+
+  }
+  else{
+    writeResult(req,res,output);
   }
 
-  if (req.query.password == undefined)
-  {
-    writeResult(req, res, {'error' : "Password is required"});
-    return;
-  }
   
-  var con = mysql.createConnection(conInfo);
-  con.connect(function(err) 
-  {
-    if (err) 
-      writeResult(req, res, {'error' : err});
-    else
-    {
-      con.query("SELECT * FROM USER WHERE USER_EMAIL = ?", [req.query.email], function (err, result, fields) 
-      {
-        if (err) 
-          writeResult(req, res, {'error' : err});
-        else
-        {
-          if(result.length == 1 && bcrypt.compareSync(req.query.password, result[0].USER_PASS))
-          {
-            req.session.user = {'result' : {'id': result[0].USER_ID, 'email': result[0].USER_EMAIL, "score":result[0].USER_SCORE}};
-            writeResult(req, res, req.session.user);
-          }
-          else 
-          {
-            writeResult(req, res, {'error': "Invalid email/password"});
-          }
-        }
-      });
-    }
-  });
-}
-
-function logout(req, res)
-{
-  req.session.user = undefined;
-  writeResult(req, res, {'error' : 'Nobody is logged in.'});
-}
-function whoIsLoggedIn(req, res)
-{
-  if (req.session.user == undefined)
-    writeResult(req, res, {'error' : 'Nobody is logged in.'});
-  else
-    writeResult(req, res, req.session.user);
-}
-
-function showAdmins(req,res)
-{
-var con = mysql.createConnection(conInfo);
-con.connect(function(err) 
-{
-  if (err) 
-    res.send({'error' : err});
-  else
-  {
-    console.log('DBCONNECTION SUCCESSFUL');
-    con.query("SELECT * FROM USER", function (err, result, fields) 
-            {
-              if (err) 
-                res.send({'error' : err});
-              else
-                res.send({'result' : result});
-            });
-  }
-}); 
+});
 
 }
-
-//END OF DBFUNTIONS
-
+//=======================================
 

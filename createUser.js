@@ -19,8 +19,8 @@ let ps = new shell({
   noProfile: true
 });
 
-
-ps.addCommand(`New-ADUser -Name ${user.Username} -DisplayName ${user.Username} -GivenName ${user.Fname} -Surname ${user.Lname} -Enabled $True -AccountPassword (ConvertTo-SecureString ${user.Password} -AsPlainText -force) -PassThru | % {Add-ADGroupMember -Identity "${user.Group}" -Members $_}`)
+//($Secure_String_Pwd = ConvertTo-SecureString "${user.Password}" -AsPlainText -force)
+ps.addCommand(`New-ADUser -path "OU=${user.Group}, DC=TRANSAD, DC=local" -UserPrincipalName "${user.Username}@TRANSAD.local" -Name ${user.Username} -DisplayName ${user.Username} -GivenName ${user.Fname} -Surname ${user.Lname} -PasswordNeverExpires $True -Enabled $True -AccountPassword ($Secure_String_Pwd = ConvertTo-SecureString -AsPlainText "${user.Password}"  -force) -PassThru | % {Add-ADGroupMember -Identity "${user.Group}" -Members $_}`)
 ps.invoke().then(output => {
     callback(`Account ${user.Username} Created Successfully`)
     console.log(`Account ${user.Username} Created Successfully`);

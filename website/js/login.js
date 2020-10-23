@@ -16,7 +16,7 @@ $(document).ready(function() {
 
         if (checkvalue) {
             //window.location.replace("http://10.0.2.6:3000/createaccount");
-            sendRequest(`http://10.0.2.6:3000/login?email=${username}&password=${password}`, (output) => {
+            sendRequest(`http://10.0.2.6:3000/ldapAuth?username=${username}&password=${password}`, (output) => {
                 console.log(output);
                 data = JSON.parse(output);
                 if (data.error) {
@@ -25,6 +25,7 @@ $(document).ready(function() {
 
                 } else {
                     window.location.replace("http://10.0.2.6:3000/accountpage");
+                    //console.log("yut");
                 }
             });
         } else {

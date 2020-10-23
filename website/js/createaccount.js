@@ -1,16 +1,15 @@
 $(document).ready(function() {
     console.log("THE PAGE HAS LOADED AND JS AND JQUERY PROBABLY WORK IF YOUR'RE READING THIS")
-    
+
     sendRequest(`http://10.0.2.6:3000/whoisloggedin`, (output) => {
         console.log(output);
         const data = JSON.parse(output);
-        let email = JSON.stringify(data.result.email)
-        email = email.replace(/"/gm, "");
-        email = email.replace(/\@.*$/gm, "");
+        let name = JSON.stringify(data.result.givenName)
+        name = name.replace(/"/gm, "");
+        name = name.replace(/\@.*$/gm, "");
         $('#greeter').empty();
-        $('#greeter').append(`Hello ${email}`);
+        $('#greeter').append(`Hello ${name}`);
         console.log(data.result.email);
-
     });
 
 
