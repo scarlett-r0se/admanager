@@ -1,73 +1,115 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
-	<meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="author" content="Scarlett & Jose">
-	<meta name="description" content="Create Account">
-	<link rel="shortcut icon" type="image/png" href="image/t.png"/>
-    <meta name="generator" content="Jekyll v4.1.1">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="author" content="Scarlett & Jose" />
+    <meta name="description" content="Create Account" />
+    <link rel="shortcut icon" type="image/png" href="image/t.png" />
+    <meta name="generator" content="Jekyll v4.1.1" />
     <title>Transcend Inc. Create Account</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
     <!-- Custom styles for this template -->
-    <link href="css/signin.css" rel="stylesheet">
-    <link href="css/cover.css" rel="stylesheet">
-</head>
+    <link href="css/signin.css" rel="stylesheet" />
+    <link href="css/cover.css" rel="stylesheet" />
+  </head>
 
-<body class="text-center">
+  <body class="text-center">
     <div id="logoutmodal" class="modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Are you sure you want return to account page?</h5>
-                    <button type="button" class="btn btn-danger close" data-dismiss="modal" aria-label="Close" id="modalclose">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                    <div class="modal-body">
-                    <p>Canceling will take you back to account page.</p>
-                </div>
-                <div class="modal-footer">
-                    <button onclick="goBack()" type="button" class="btn btn-danger">Return</button>
-                </div>
-            </div>
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              Are you sure you want return to account page?
+            </h5>
+            <button
+              type="button"
+              class="btn btn-danger close"
+              data-dismiss="modal"
+              aria-label="Close"
+              id="modalclose"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Canceling will take you back to account page.</p>
+          </div>
+          <div class="modal-footer">
+            <button onclick="goBack()" type="button" class="btn btn-danger">
+              Return
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
     <form class="form-signin">
-        <h4 class="h3 mb-3 font-weight-normal" id="greeter"></h4>
-        <h4 class="h3 mb-3 font-weight-normal">Create New User?</h4>
-        <img class="mb-4" src="image/t.png" alt="" width="72" height="72">
-        <h1 class="h3 mb-3 font-weight-normal">Please fill in the following information.</h1>
-        <input type="text" class="pad form-control" id="fname" name="fname" placeholder="First Name">
-        <input type="text" class="pad form-control" id="lname" name="lname" placeholder="Last Name">
-        <input type="password" class="pad form-control" id="pass" name="pass" placeholder="Password">
-        <input type="password" class="pad form-control" id="cpass" name="cpass" placeholder="Confirm Password">
+      <h4 class="h3 mb-3 font-weight-normal" id="greeter"></h4>
+      <h4 class="h3 mb-3 font-weight-normal">Create New User?</h4>
+      <img class="mb-4" src="image/t.png" alt="" width="72" height="72" />
+      <h1 class="h3 mb-3 font-weight-normal">
+        Please fill in the following information.
+      </h1>
+      <input
+        type="text"
+        class="pad form-control"
+        id="fname"
+        name="fname"
+        placeholder="First Name"
+      />
+      <input
+        type="text"
+        class="pad form-control"
+        id="lname"
+        name="lname"
+        placeholder="Last Name"
+      />
+      <input
+        type="password"
+        class="pad form-control"
+        id="pass"
+        name="pass"
+        placeholder="Password"
+      />
+      <input
+        type="password"
+        class="pad form-control"
+        id="cpass"
+        name="cpass"
+        placeholder="Confirm Password"
+      />
 
-        <select class="form-control" id="group" name="group">
-            <option value='Default' selected>Select Default Group</option>
-            <option value='General'>General</option>
-            <option value='IT'>IT</option>
-            <option value='Finance'>Finance</option>
-            <option value='HR'>HR</option>
-        </select>
-        <br>
+      <select class="form-control" id="group" name="group">
+        <option value="Default" selected>Select Default Group</option>
+        <option value="General">General</option>
+        <option value="IT">IT</option>
+        <option value="Finance">Finance</option>
+        <option value="HR">HR</option>
+      </select>
+      <br />
 
-        <div>
-            <button id='register' type="button" class="btn btn-primary">Create New User</button>
-            <button id='logout' type="button" class="btn btn-danger">Return</button>
-        </div>
-        <div style="margin: auto;">
-            <p id="status"></p>
-        </div>
+      <div>
+        <button id="register" type="button" class="btn btn-primary">
+          Create New User
+        </button>
+        <button id="logout" type="button" class="btn btn-danger">Return</button>
+      </div>
+      <div style="margin: auto">
+        <p id="status"></p>
+      </div>
     </form>
 
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.js"></script>
-	<script type="text/javascript" src="js/fullsite.js"></script>
-	<script type="text/javascript" src="js/createaccount.js"></script>
-</body>
-
+    <script
+      type="text/javascript"
+      src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.js"
+    ></script>
+    <script type="text/javascript" src="js/fullsite.js"></script>
+    <script type="text/javascript" src="js/createaccount.js"></script>
+  </body>
 </html>

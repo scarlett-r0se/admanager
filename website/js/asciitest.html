@@ -1,0 +1,51 @@
+<script
+  type="text/javascript"
+  src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.js"
+></script>
+
+<script>
+  $(document).ready(function () {
+    console.log("DATrans@$12345".asciiEncode());
+    console.log("DATrans@$12345".asciiEncode().asciiDecode());
+  });
+
+  String.prototype.asciiEncode = function () {
+    var ascii = "";
+    for (var i = 0; i < this.length; i++) {
+      let asc = this.charCodeAt(i);
+      //console.log(asc);
+      if (asc.toString().length < 3) {
+        ascii += "0" + asc;
+      } else {
+        ascii += asc;
+      }
+    }
+
+    return ascii;
+  };
+
+  String.prototype.asciiDecode = function () {
+    var string = "";
+    for (let i = 0; i < this.length; i++) {
+      if (i % 3 == 0) {
+        string += String.fromCharCode(this.slice(i, i + 3));
+        //console.log(i ,ascii.slice(i,i+3));
+      }
+    }
+    return string;
+  };
+
+  /*
+String.prototype.hexEncode = function(){
+    var hex, i;
+
+    var result = "";
+    for (i=0; i<this.length; i++) {
+        hex = this.charCodeAt(i).toString(16);
+        result += ("000"+hex).slice(-4);
+    }
+
+    return result
+}
+*/
+</script>

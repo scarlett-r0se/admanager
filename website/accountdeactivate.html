@@ -7,7 +7,7 @@
 	<meta name="description" content="Account Page">
 	<link rel="shortcut icon" type="image/png" href="image/t.png" />
 	<meta name="generator" content="Jekyll v4.1.1">
-	<title>Transcend Inc. Account Page</title>
+	<title>Transcend Inc. Disable / Enable Accounts</title>
 
 	<!-- Bootstrap core CSS -->
 	<link href="css/bootstrap.min.css" rel="stylesheet">
@@ -20,16 +20,16 @@
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title">Are you sure you'd like to logout?</h5>
+					<h5 class="modal-title">Are you sure you want return to account page?</h5>
 					<button type="button" class="btn btn-danger close" data-dismiss="modal" aria-label="Close" id="modalclose">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
 				<div class="modal-body">
-					<p>Logging out will bring you to the home page.</p>
+					<p>Canceling will take you back to account page.</p>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-danger" id="modallogout">Logout</button>
+                    <button onclick="goBack()" type="button" class="btn btn-danger">Return</button>
 				</div>
 			</div>
 		</div>
@@ -43,20 +43,22 @@
 				<h3 class="masthead-brand">Transcend Inc.</h3>
 				<nav class="nav nav-masthead justify-content-center">
 					<a class="nav-link" href="index.html">Home</a>
-					<a class="nav-link active" href="accountpage.html">Account</a>
+					<a class="nav-link active" href="accountpage.html">Disable / Enable Account</a>
 			</div>
 		</header>
 
 		<main role="main" class="inner cover">
-			<h1 class="cover-heading display-1" id="greeter"></h1>
-			<p class="lead">Welcome to your account page.</p>
-			<p class="text-left lead">Admin tools:</p>
+			<p class="text-left lead">Choose an account to disable or enable.</p>
+			<div>
+				<select class="form-control" id="users" name="group">
+					<option value='Default' selected>Select Default Group</option>
+				</select><br>
+				<button id="" type="button" class="btn btn-danger">
+					Disable Account</button>
+				<button id="" type="button" class="btn btn-success">Enable Account</button><br><br>
+			</div>
 			<div class="text-left">
-				<a href="createaccount.html" class="btn btn-secondary pad">Create AD Account</a><br>
-				<a href="accountdeactivate.html" class="btn btn-secondary pad">Enable / Disable Account</a><br>
-				<a href="/status" class="btn btn-secondary pad">Check Express Performance</a><br>
-				<a href="softether.html" class="btn btn-secondary pad">SoftEther information</a><br>
-				<button id='logout' type="button" class="btn btn-danger pad">Logout</button><br>
+				<button id='logout' type="button" class="btn btn-danger">Return</button>
 			</div>
 		</main>
 		<footer class="mastfoot mt-auto">
@@ -66,5 +68,6 @@
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.js"></script>
 	<script type="text/javascript" src="js/fullsite.js"></script>
 	<script type="text/javascript" src="js/accountpage.js"></script>
+	<script type="text/javascript" src="js/accountdeactivate.js"></script>
 </body>
 </html>

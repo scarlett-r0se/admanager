@@ -14,7 +14,7 @@ async function auth(usename,password,callback) {
       url: 'ldap://10.0.2.6',
       // tlsOptions: { rejectUnauthorized: false }
     },
-    userDn: `CN=${usename},OU=IT,DC=TRANSAD,DC=local`,
+    userDn:`CN=${usename},OU=IT,OU=User Groups,DC=TRANSAD,DC=local`,
     userPassword: `${password}`,
     userSearchBase: 'DC=TRANSAD,DC=local',
     usernameAttribute: 'name',

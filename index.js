@@ -73,6 +73,12 @@ app.get('/accountpage',ensureloggedin,(req, res) => {
  
 });
 
+app.get('/accountdeactivate',(req,res)=>{
+  res.writeHead(200, {'Content-Type': 'text/html'});
+    var index = fs.readFileSync('website/accountdeactivate.html');
+    res.end(index);
+})
+
 app.get('/newuser', (req, res) => {
   
   //res.send('NEW USER REQUEST RECIEVED');
@@ -147,6 +153,12 @@ app.all('/vpnStatus',(req,res)=>{
   var index = fs.readFileSync('website/softether.html');
   res.end(index);
 
+})
+
+app.all('/getADusers',(req,res)=>{
+  createUser.psGetUsers(output=>{
+    res.send(JSON.parse(output));
+  })
 })
 
 
