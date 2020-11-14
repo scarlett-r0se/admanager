@@ -43,19 +43,21 @@
 				<h3 class="masthead-brand">Transcend Inc.</h3>
 				<nav class="nav nav-masthead justify-content-center">
 					<a class="nav-link" href="index.html">Home</a>
-					<a class="nav-link active" href="accountpage.html">Disable / Enable Account</a>
+					<a class="nav-link active" href="accountdeactivate.html">Disable / Enable Account</a>
 			</div>
 		</header>
 
 		<main role="main" class="inner cover">
 			<p class="text-left lead">Choose an account to disable or enable.</p>
 			<div>
-				<select class="form-control" id="users" name="group">
+				<select class="form-control pad" id="users" name="group">
 					<option value='Default' selected>Select Default Group</option>
-				</select><br>
-				<button id="" type="button" class="btn btn-danger">
-					Disable Account</button>
-				<button id="" type="button" class="btn btn-success">Enable Account</button><br><br>
+				</select>
+				<div class="pad">
+					<button id="disable" type="button" class="btn btn-danger">
+						Disable Account</button>
+					<button id="enable" type="button" class="btn btn-success">Enable Account</button><br>
+				</div>
 			</div>
 			<div class="text-left">
 				<button id='logout' type="button" class="btn btn-danger">Return</button>

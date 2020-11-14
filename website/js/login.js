@@ -17,9 +17,9 @@ $(document).ready(function () {
     }
 
     if (checkvalue) {
-      //window.location.replace("http://10.0.2.6:3000/createaccount");
+      //window.location.replace("https://ad.inertialframe.net/createaccount");
       sendRequest(
-        `http://10.0.2.6:3000/ldapAuth?username=${username}&password=${password}`,
+        `https://ad.inertialframe.net/ldapAuth?username=${username}&password=${password}`,
         (output) => {
           console.log(output);
           data = JSON.parse(output);
@@ -27,7 +27,7 @@ $(document).ready(function () {
             $("#status").empty();
             $("#status").append(JSON.stringify(data.error).replace(/"/gm, ""));
           } else {
-            window.location.replace("http://10.0.2.6:3000/accountpage");
+            window.location.replace("https://ad.inertialframe.net/accountpage");
             //console.log("yut");
           }
         }

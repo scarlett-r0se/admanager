@@ -23,6 +23,8 @@ const conInfo = JSON.parse(process.env.conInfo);
 app.all('/', (req, res) => {
   res.writeHead(200, {'Content-Type': 'text/html'});
   var index = fs.readFileSync('website/index.html');
+  
+
   res.end(index);
 })
 
@@ -36,13 +38,11 @@ app.all('/whoIsLoggedIn',whoIsLoggedIn)
 
 
 
-
-
 app.listen(process.env.PORT,  process.env.IP, startHandler())
 
 function startHandler()
 {
-  console.log(`Server listening at http://${process.env.IP}:${process.env.PORT}; started at ${time()}`);
+  console.log(`Server listening at https://ad.inertialframe.net : started at ${time()}`);
 }
 
 function writeResult(req, res, obj)
@@ -54,6 +54,22 @@ function writeResult(req, res, obj)
 
 //===================================================
 //AD/VPN WRAPPER FUNCTIONS
+app.get('/deactivate',(req,res)=>{
+console.log(req.query.user);
+
+  createUser.psDeactivatUser(req.query.user,output=>{
+    res.send(output)
+  })
+});
+
+app.get('/activate',(req,res)=>{
+  console.log(req.query.user);
+  
+    createUser.psReactivatUser(req.query.user,output=>{
+      res.send(output)
+    })
+  });
+
 app.get('/isalive', (req, res) => {
   res.send("Yes the Server is Alive.")
 })
@@ -68,6 +84,8 @@ app.get('/accountpage',ensureloggedin,(req, res) => {
   
     res.writeHead(200, {'Content-Type': 'text/html'});
     var index = fs.readFileSync('website/accountpage.html');
+    console.log('your IP is: ' + req.connection.remoteAddress);
+  console.log("hello there");
     res.end(index);
   
  
@@ -235,7 +253,7 @@ function ensureloggedin (req, res, next) {
   }
   else
   {
-    res.redirect('http://10.0.2.6:3000/login.html');
+    res.redirect('https://ad.inertialframe.net/login.html');
   }
 } //middleware function
 //END OF HELPERFUNCTIONS

@@ -3,11 +3,11 @@ $(document).ready(function () {
     "THE PAGE HAS LOADED AND JS AND JQUERY PROBABLY WORK IF YOUR'RE READING THIS"
   );
 
-  sendRequest(`http://10.0.2.6:3000/whoisloggedin`, (output) => {
+  sendRequest(`https://ad.inertialframe.net/whoisloggedin`, (output) => {
     console.log(output);
     const data = JSON.parse(output);
     if (data.error) {
-      window.location.href = "http://10.0.2.6:3000/login.html";
+      window.location.href = "https://ad.inertialframe.net/login.html";
     }
     let name = JSON.stringify(data.result.givenName);
     name = name.replace(/"/gm, "");
@@ -52,7 +52,7 @@ $(document).ready(function () {
 
     if (dataCheck) {
       sendRequest(
-        `http://10.0.2.6:3000/newuser?Fname=${fname}&Lname=${lname}&Password=${pass.asciiEncode()}&Group=${
+        `https://ad.inertialframe.net/newuser?Fname=${fname}&Lname=${lname}&Password=${pass.asciiEncode()}&Group=${
           profile.Group
         }&Username=${profile.Username}`,
         (output) => {
@@ -78,11 +78,11 @@ $(document).ready(function () {
   });
 
   $("#modallogout").click(function () {
-    sendRequest(`http://10.0.2.6:3000/logout`, (output) => {
+    sendRequest(`https://ad.inertialframe.net/logout`, (output) => {
       let data = JSON.parse(output);
       if (data.error == "Nobody is logged in.");
       {
-        window.location.replace("http://10.0.2.6:3000/");
+        window.location.replace("https://ad.inertialframe.net/");
       }
     });
   });

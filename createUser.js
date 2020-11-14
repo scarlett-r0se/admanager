@@ -1,5 +1,6 @@
 const shell = require('node-powershell');
 const https = require('https');
+const { json } = require('express');
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
 
@@ -7,6 +8,8 @@ module.exports = {
   
   psNewUser,
   psGetUsers,
+  psDeactivatUser,
+  psReactivatUser,
 };
 
 
@@ -98,6 +101,100 @@ function psGetUsers(callback)
 
       //console.log(output);
       callback(output);
+
+
+    
+    ps.dispose();
+    }).catch(err => {
+      console.log("ERROR Caught ",err);
+      callback(err);  
+      ps.dispose();
+    });
+
+
+
+}
+
+function psDeactivatUser(user,callback)
+{
+
+  let ps = new shell({
+    executionPolicy: 'Bypass',
+    noProfile: true
+  });
+
+  ps.addCommand(`Disable-ADAccount -Identity ${user}`)
+    ps.invoke().then(output=>{
+
+      //console.log(output);
+      psGetUsers(output=>{
+        const data = JSON.parse(output);
+        let userDisabled='';
+        for(var i =0;i<data.length;i++)
+        {
+          if(user == data[i].Name)
+          {
+            if(data[i].Enabled==false)
+            {
+              userDisabled = `USER ${data[i].Name} Is Deactivated`
+            }
+            else
+            {
+              userDisabled = `USER ${data[i].Name} Is NOT Deactivated`
+            }
+
+          }
+
+        }
+        callback(userDisabled);
+      })
+
+
+    
+    ps.dispose();
+    }).catch(err => {
+      console.log("ERROR Caught ",err);
+      callback(err);  
+      ps.dispose();
+    });
+
+
+
+}
+
+function psReactivatUser(user,callback)
+{
+
+  let ps = new shell({
+    executionPolicy: 'Bypass',
+    noProfile: true
+  });
+
+  ps.addCommand(`Enable-ADAccount -Identity ${user}`)
+    ps.invoke().then(output=>{
+
+      //console.log(output);
+      psGetUsers(output=>{
+        const data = JSON.parse(output);
+        let userDisabled='';
+        for(var i =0;i<data.length;i++)
+        {
+          if(user == data[i].Name)
+          {
+            if(data[i].Enabled!=false)
+            {
+              userDisabled = `USER ${data[i].Name} Is Activated`
+            }
+            else
+            {
+              userDisabled = `USER ${data[i].Name} Is NOT Activated`
+            }
+
+          }
+
+        }
+        callback(userDisabled);
+      })
 
 
     
